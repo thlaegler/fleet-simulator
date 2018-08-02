@@ -8,6 +8,6 @@ public enum VehicleType {
 
   @JsonEnumDefaultValue
   UNKNOWN, //
-  TAXI, BUS, SHUTTLE, TRAIN, PLANE, FERRY, BICYCLE, CAR_SHARE
+  TAXI, BUS, SHUTTLE, TRAIN, PLANE, FERRY, BICYCLE, CAR_SHARE, SEDAN
 
 }

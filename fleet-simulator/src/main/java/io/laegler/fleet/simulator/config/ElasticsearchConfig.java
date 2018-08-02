@@ -82,8 +82,6 @@ public class ElasticsearchConfig {
       objectMapper.registerModule(new GeoModule());
       objectMapper.registerModule(new CustomGeoModule());
       objectMapper.registerModule(new JavaTimeModule());
-      // objectMapper.findAndRegisterModules(); // Register all ES modules on class
-      // path
       objectMapper.addMixIn(EncodedPolyline.class, CustomEncodedPolyline.class);
     }
 

@@ -16,7 +16,7 @@ public interface GtfsShapeJpaRepository extends JpaRepository<Shape, ShapeCompos
   @Query(
       value = "SELECT * FROM shapes s, trips t WHERE t.trip_id = ?1 AND t.shape_id = s.shape_id ORDER BY s.shape_pt_sequence ASC",
       nativeQuery = true)
-  List<Shape> findByTripIdOrderBySequence(@Param("tripId") String tripId);
+  List<Shape> findByTripIdOrderBySequenceAsc(@Param("tripId") String tripId);
 
   // List<Shape> findByTrips_TripId(@Param("tripId") String tripId);
 

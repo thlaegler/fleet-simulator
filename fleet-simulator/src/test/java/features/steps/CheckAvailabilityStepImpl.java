@@ -1,4 +1,4 @@
-package features.stepDefinitions;
+package features.steps;
 
 import static features.World.REQ;
 import static features.World.RESP;

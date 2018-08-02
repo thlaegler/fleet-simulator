@@ -2,10 +2,10 @@ package io.laegler.fleet.gtfs.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import org.springframework.data.annotation.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,9 +18,9 @@ import lombok.NoArgsConstructor;
  * itinerary. Most fare structures use some combination of the following rules:
  *
  * <pre>
- * <li>Fare depends on origin or destination stations.</li>
- * <li>Fare depends on which zones the itinerary passes through.</li>
- * <li>Fare depends on which route the itinerary uses.</li>
+ * Fare depends on origin or destination stations.
+ * Fare depends on which zones the itinerary passes through.
+ * Fare depends on which route the itinerary uses.
  * </pre>
  *
  * For examples that demonstrate how to specify a fare structure with fare_rules.txt and

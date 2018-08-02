@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import org.springframework.validation.annotation.Validated;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -49,7 +50,7 @@ public class StopTime {
    * trip_id Required The trip_id field contains an ID that identifies a trip. This value is
    * referenced from the trips.txt file.
    */
-  // @JsonBackReference
+  @JsonBackReference
   @ManyToOne
   @JoinColumn(name = "trip_id", referencedColumnName = "trip_id")
   private Trip trip;

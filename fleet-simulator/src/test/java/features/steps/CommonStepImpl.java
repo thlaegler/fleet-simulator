@@ -1,4 +1,4 @@
-package features.stepDefinitions;
+package features.steps;
 
 import static features.World.RESP;
 import cucumber.api.java.en.Given;

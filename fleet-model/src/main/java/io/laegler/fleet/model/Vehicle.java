@@ -16,6 +16,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 import org.springframework.data.elasticsearch.annotations.Setting;
 import org.springframework.validation.annotation.Validated;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -80,6 +81,10 @@ public class Vehicle implements Serializable {
   @Field(type = Nested)
   @NotNull
   private Driver driver;
+
+  @ApiModelProperty(value = "Vehicle Bearing", example = "180.0")
+  @Field(type = FieldType.Double)
+  private Double bearing;
 
   @ApiModelProperty(example = "TAXI", readOnly = true, accessMode = READ_ONLY)
   @Field(type = Keyword)

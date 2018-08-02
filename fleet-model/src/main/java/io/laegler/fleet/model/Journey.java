@@ -27,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.google.maps.model.DirectionsRoute;
 import io.laegler.fleet.json.LocalDateTimeDeserializer;
 import io.laegler.fleet.json.LocalDateTimeSerializer;
 import io.laegler.fleet.json.StatusDeserializer;
@@ -78,6 +79,9 @@ public class Journey implements Serializable {
   private Position from;
 
   @ApiModelProperty
+  private String booking;
+
+  @ApiModelProperty
   @Field(type = Nested)
   @NotNull
   private Position to;
@@ -123,6 +127,17 @@ public class Journey implements Serializable {
   @Builder.Default
   private LocalDateTime start = LocalDateTime.now();
 
+  @ApiModelProperty(value = "Pick-up time of the Journey", example = "01-01-2000T01:30:00",
+      required = false)
+  @JsonSerialize(using = LocalDateTimeSerializer.class)
+  @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+  @Builder.Default
+  @Transient
+  private LocalDateTime pickupTime = LocalDateTime.now();
+
+  @ApiModelProperty
+  private long pickupTimeUTC;
+
   @ApiModelProperty(value = "Estimated Time of Arrival in ISO DateTime Format",
       example = "2000-10-31T01:30:00.000", required = false, readOnly = true,
       accessMode = READ_ONLY)
@@ -130,6 +145,12 @@ public class Journey implements Serializable {
   @JsonSerialize(using = LocalDateTimeSerializer.class)
   @JsonDeserialize(using = LocalDateTimeDeserializer.class)
   private LocalDateTime eta;
+
+  @ApiModelProperty(value = "Estimated Time of Arrival as UTC Timestamp",
+      example = "2000-10-31T01:30:00.000", required = false, readOnly = true,
+      accessMode = READ_ONLY)
+  @Transient
+  private long etaTimestampUtc;
 
   @ApiModelProperty(example = "000ce023-0e3c-47ea-b148-7e300783b5b3", readOnly = true,
       accessMode = READ_ONLY)
@@ -140,6 +161,16 @@ public class Journey implements Serializable {
   @Transient
   // @JsonIgnore
   private Provider provider;
+
+  @ApiModelProperty(accessMode = READ_ONLY, hidden = true)
+  @Transient
+  // @JsonIgnore
+  private List<Route> routes;
+
+  @ApiModelProperty(accessMode = READ_ONLY, hidden = true)
+  @Transient
+  // @JsonIgnore
+  private DirectionsRoute routeRaw;
 
   @ApiModelProperty(
       example = "[ '000ce023-0e3c-47ea-b148-7e300783b5b3', '000ce023-0e3c-47ea-b148-7e300783b5b3' ]")

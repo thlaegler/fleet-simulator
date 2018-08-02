@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @Data
 @Builder
 @NoArgsConstructor
+// @AllArgsConstructor
 @Validated
 @Embeddable
 public class Position implements Serializable {
@@ -47,7 +48,7 @@ public class Position implements Serializable {
 
   @ApiModelProperty(value = "Latitude/Longitude", example = "-36.881, 174.651", hidden = true)
   @GeoPointField
-  @Transient
+  // @Transient
   private String location;
 
   @ApiModelProperty(name = "place_id",

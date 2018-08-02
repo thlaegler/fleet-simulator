@@ -169,7 +169,6 @@ public class Stop implements Serializable {
    * treated as stops. Stations may have different properties from stops when they are represented
    * on a map or used in trip planning.
    *
-   * @return current stop's location type.
    * @see StopLocationType refer to documentation for more details.
    */
   @Column(name = "location_type")

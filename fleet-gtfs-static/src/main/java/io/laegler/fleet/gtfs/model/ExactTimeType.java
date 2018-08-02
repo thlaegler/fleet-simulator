@@ -19,7 +19,7 @@ import lombok.Getter;
  * 0 or (empty) - Frequency-based trips are not exactly scheduled. This is the default behavior.
  * 1 - Frequency-based trips are exactly scheduled. For a frequencies.txt row, trips are scheduled
  *  starting with trip_start_time = start_time + x * headway_secs for all x in (0, 1, 2, ...)
- *  where trip_start_time < end_time.
+ *  where trip_start_time lower than end_time.
  * </pre>
  */
 @AllArgsConstructor

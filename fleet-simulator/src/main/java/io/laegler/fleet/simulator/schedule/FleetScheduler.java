@@ -10,9 +10,12 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -34,6 +37,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class FleetScheduler {
+
+  @Value("${spring.jpa.properties.hibernate.jdbc.timeZone:UTC}")
+  private String defaultTimeZone;
 
   @Autowired
   private ObjectMapper objectMapper;
@@ -60,8 +66,14 @@ public class FleetScheduler {
   public void moveJourneys() {
     List<Journey> journeys = journeyService.getActiveJourneys();
     journeys.stream().forEach(j -> {
-      Vehicle vehicle = j.getTrips().values().stream().map(t -> moveTrip(t)).findFirst()
-          .orElseThrow(() -> new IllegalStateException("Cannot find Vehicle for Trip"));
+      List<Vehicle> vehicles =
+          j.getTrips().values().stream().map(t -> moveTrip(t)).collect(Collectors.toList());
+      Vehicle vehicle = null;
+      try {
+        vehicle = vehicles.get(0);
+      } catch (Exception e) {
+        throw new IllegalStateException("Cannot find Vehicle for Trip");
+      }
       j.setVehicle(vehicle);
       j.setPosition(vehicle.getPosition());
       if (!isEmpty(j.getTrips())) {
@@ -111,16 +123,21 @@ public class FleetScheduler {
   }
 
   private Position calculateNewPosition(Trip trip) {
+    ZoneId zone = UTC;
+    if (defaultTimeZone != null) {
+      zone = ZoneId.of(defaultTimeZone, ZoneId.SHORT_IDS);
+    }
     LocalDateTime now = LocalDateTime.now();
     long pastSeconds = 0L;
-    long startSecond = trip.getStart().atOffset(UTC).toEpochSecond();
-    long currentSeconds = now.atOffset(UTC).toEpochSecond() - startSecond;
-    long endSeconds = trip.getEta().atOffset(UTC).toEpochSecond() - startSecond;
+    long startSecond = trip.getStart().atZone(zone).toEpochSecond();
+    long currentSeconds = now.atZone(zone).toEpochSecond() - startSecond;
+    long endSeconds = trip.getEta().atZone(zone).toEpochSecond() - startSecond;
     Position newLocation = trip.getPosition();
 
     int i = 0;
     if (trip.getRoute() != null && trip.getStart().isBefore(now)) {
-      if (trip.getEta().isAfter(now)) {
+      if (trip.getEta().isBefore(now)) {
+        log.trace("Trip has reached the end");
         return trip.getTo();
       }
       List<Position> positions = new ArrayList<>();
@@ -164,6 +181,9 @@ public class FleetScheduler {
           }
         }
       }
+    } else {
+      log.trace("Trip hasn't started yet: {} {} {}", trip.getFrom(), trip.getTo(),
+          trip.getStatus());
     }
     return trip.getPosition();
   }

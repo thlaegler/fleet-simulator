@@ -16,6 +16,8 @@ public class FleetSimulatorProperties {
 
   private ProviderType type;
 
+  private String timezone;
+
   private String city;
 
   private double circuit;

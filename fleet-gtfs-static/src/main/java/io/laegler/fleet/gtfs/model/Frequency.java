@@ -59,6 +59,6 @@ public class Frequency {
   @Column(name = "headway_secs")
   private Long headwaySecs;
 
-  @Column(name = "exact_time")
-  private ExactTimeType exactTime;
+  @Column(name = "exact_times")
+  private ExactTimeType exactTimes;
 }

@@ -13,23 +13,20 @@ import com.google.maps.model.EncodedPolyline;
 import io.laegler.fleet.simulator.geo.CustomEncodedPolyline;
 
 @Configuration
-public class JacksonConfig {
+public class FleetJacksonConfig {
 
   @Bean
   public ObjectMapper objectMapper() {
     ObjectMapper objectMapper = new ObjectMapper();
-    // objectMapper.configure(WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS, false);
-    // objectMapper.configure(WRITE_DATES_AS_TIMESTAMPS, false);
     objectMapper.configure(FAIL_ON_UNKNOWN_PROPERTIES, false);
     objectMapper.configure(FAIL_ON_EMPTY_BEANS, false);
     objectMapper.configure(ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
     objectMapper.registerModule(new GeoModule());
     objectMapper.registerModule(new CustomGeoModule());
     objectMapper.registerModule(new JavaTimeModule());
-    // objectMapper.findAndRegisterModules(); // Register all ES modules on class path
     objectMapper.addMixIn(EncodedPolyline.class, CustomEncodedPolyline.class);
 
     return objectMapper;
   }
-}
 
+}

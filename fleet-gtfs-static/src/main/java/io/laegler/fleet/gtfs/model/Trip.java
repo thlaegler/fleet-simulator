@@ -49,7 +49,7 @@ public class Trip implements Serializable {
   private String tripId;
 
   @JsonIgnore
-  // @JsonManagedReference
+  @JsonManagedReference
   @OneToMany(mappedBy = "trip", cascade = CascadeType.ALL, orphanRemoval = true,
       fetch = FetchType.LAZY)
   private Set<StopTime> stopTimes;

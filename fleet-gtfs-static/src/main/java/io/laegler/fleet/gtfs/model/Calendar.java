@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
-import org.springframework.data.annotation.Id;
 import io.laegler.fleet.gtfs.GtfsLocalDateConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -76,6 +76,7 @@ public class Calendar {
    * date range is specified using the start_date and end_date fields.) A value of 0 indicates that
    * service is not available on Wednesdays in the date range. Note: You may list exceptions for
    * particular dates, such as holidays, in the calendar_dates.txt file.
+   * </pre>
    */
   @Column(name = "wednesday")
   private boolean wednesday;
@@ -89,6 +90,7 @@ public class Calendar {
    * range is specified using the start_date and end_date fields.) A value of 0 indicates that
    * service is not available on Thursdays in the date range. Note: You may list exceptions for
    * particular dates, such as holidays, in the calendar_dates.txt file.
+   * </pre>
    */
   @Column(name = "thursday")
   private boolean thursday;

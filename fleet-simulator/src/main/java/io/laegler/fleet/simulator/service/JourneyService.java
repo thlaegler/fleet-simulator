@@ -11,6 +11,7 @@ import static java.util.stream.Collectors.toMap;
 import static org.springframework.util.CollectionUtils.isEmpty;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -121,7 +122,7 @@ public class JourneyService {
     journey.setFare(calculateFare(journey));
     journey.setCurrency("NZD");
     if (journey.getStart() == null) {
-      journey.setStart(LocalDateTime.now());
+      journey.setStart(LocalDateTime.now(ZoneId.of(props.getTimezone())));
     }
     journey.setBookingId("BOOKING" + System.currentTimeMillis());
     journey.setVehicle(vehicle);
@@ -256,10 +257,11 @@ public class JourneyService {
     Position operationBase = geoService.getPositionByAdress(props.getCity()).orElseThrow(
         () -> new IllegalStateException("Cannot resolve Address to Position: " + props.getCity()));
 
+    // +/- 10 Latitude and +/- 10 Longitude around the Operation area is in range
     List<Position> positionsOutOfRange = positions.stream().filter(p -> {
-      return p.getLat() > operationBase.getLat() + 2 || p.getLng() > operationBase.getLng() + 2
-          || p.getLat() < operationBase.getLat() - 2 || p.getLng() < operationBase.getLng() - 2;
-    }).collect(Collectors.toList());
+      return p.getLat() > operationBase.getLat() + 10 || p.getLng() > operationBase.getLng() + 10
+          || p.getLat() < operationBase.getLat() - 10 || p.getLng() < operationBase.getLng() - 10;
+    }).collect(toList());
 
     return !positionsOutOfRange.stream().findFirst().isPresent();
   }

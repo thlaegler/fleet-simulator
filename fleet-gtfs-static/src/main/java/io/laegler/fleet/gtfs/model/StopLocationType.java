@@ -12,8 +12,8 @@ import lombok.Getter;
  * The location type code can have the following values:<br>
  *
  * <pre>
- * <li>0 or blank - Stop. A location where passengers board or disembark from a transit vehicle.</li>
- * <li>1 - Station. A physical structure or area that contains one or more stop.</li>
+ * 0 or blank - Stop. A location where passengers board or disembark from a transit vehicle.
+ * 1 - Station. A physical structure or area that contains one or more stop.
  * </pre>
  */
 @AllArgsConstructor

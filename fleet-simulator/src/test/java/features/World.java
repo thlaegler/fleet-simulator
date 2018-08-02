@@ -2,11 +2,11 @@ package features;
 
 import static io.restassured.RestAssured.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import java.util.regex.Pattern;
 import io.laegler.fleet.model.Position;
 import io.laegler.fleet.model.Position.PositionBuilder;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import java.util.regex.Pattern;
 
 public class World {
 

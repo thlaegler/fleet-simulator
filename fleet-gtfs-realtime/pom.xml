@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.0.4.RELEASE</version>
+		<version>2.0.6.RELEASE</version>
 		<relativePath />
 	</parent>
 
@@ -25,14 +25,15 @@
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
 		<maven.test.failure.ignore>true</maven.test.failure.ignore>
-
+		<project.scm.id>github</project.scm.id>
+		
 		<!-- Plugin Versions -->
 		<dockerfile.plugin.version>1.4.0</dockerfile.plugin.version>
 		<swagger.plugin.version>3.1.7</swagger.plugin.version>
 		<swagger.codegen.plugin.version>2.3.1</swagger.codegen.plugin.version>
 
 		<!-- Dependency Versions -->
-		<spring-boot.version>2.0.4.RELEASE</spring-boot.version>
+		<spring-boot.version>2.0.6.RELEASE</spring-boot.version>
 		<spring-cloud.version>Finchley.SR1</spring-cloud.version>
 		<springfox.version>2.9.2</springfox.version>
 		<lombok.version>1.16.20</lombok.version>
@@ -79,14 +80,9 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-		<!-- <dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-elasticsearch</artifactId>
-		</dependency> -->
+		<!-- <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-data-jpa</artifactId> 
+			</dependency> <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-data-elasticsearch</artifactId> 
+			</dependency> -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-rest</artifactId>
@@ -118,6 +114,65 @@
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<scope>provided</scope>
+			<optional>true</optional>
+		</dependency>
+		<!-- Testing -->
+		<!-- <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-test</artifactId> 
+			<scope>test</scope> </dependency> -->
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-java</artifactId>
+			<version>${cucumber.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-junit</artifactId>
+			<version>${cucumber.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-spring</artifactId>
+			<version>${cucumber.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.vimalselvam</groupId>
+			<artifactId>cucumber-extentsreport</artifactId>
+			<version>3.1.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.masterthought</groupId>
+			<artifactId>cucumber-reporting</artifactId>
+			<version>3.19.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.aventstack</groupId>
+			<artifactId>extentreports</artifactId>
+			<version>3.1.5</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>spring-mock-mvc</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
@@ -169,7 +224,7 @@
 								<include>**/*Test.java</include>
 								<include>**/*Tests.java</include>
 							</includes>
-							<reportsDirectory>${project.build.directory}/site/junit</reportsDirectory>
+							<reportsDirectory>${project.build.directory}/reports/junit</reportsDirectory>
 						</configuration>
 						<executions>
 							<execution>
@@ -193,7 +248,7 @@
 								<include>**/*IT.java</include>
 								<include>**/*ITRunner.java</include>
 							</includes>
-							<reportsDirectory>${project.build.directory}/site/junit</reportsDirectory>
+							<reportsDirectory>${project.build.directory}/reports/junit</reportsDirectory>
 						</configuration>
 						<executions>
 							<execution>
@@ -210,7 +265,7 @@
 								<id>integration-test</id>
 								<phase>integration-test</phase>
 								<configuration>
-									<reportsDirectory>${project.build.directory}/site/</reportsDirectory>
+									<reportsDirectory>${project.build.directory}/reports/</reportsDirectory>
 								</configuration>
 							</execution>
 						</executions>
@@ -269,7 +324,7 @@
 									<additionalparam>-views</additionalparam>
 									<useStandardDocletOptions>true</useStandardDocletOptions>
 									<show>private</show>
-									<outputDirectory>${project.build.directory}/site/apidocs</outputDirectory>
+									<outputDirectory>${project.build.directory}/reports/apidocs</outputDirectory>
 								</configuration>
 							</execution>
 						</executions>
@@ -288,7 +343,7 @@
 									<consoleOutput>false</consoleOutput>
 									<failsOnError>true</failsOnError>
 									<linkXRef>false</linkXRef>
-									<outputFile>${project.build.directory}/site/checkstyle.txt</outputFile>
+									<outputFile>${project.build.directory}/reports/checkstyle.txt</outputFile>
 								</configuration>
 								<goals>
 									<goal>check</goal>
@@ -310,39 +365,18 @@
 							</execution>
 						</executions>
 						<configuration>
-							<sourceJsonReportDirectory>${project.build.directory}/site/</sourceJsonReportDirectory>
-							<generatedHtmlReportDirectory>${project.build.directory}/site/cluecumber-reports</generatedHtmlReportDirectory>
+							<sourceJsonReportDirectory>${project.build.directory}/reports/</sourceJsonReportDirectory>
+							<generatedHtmlReportDirectory>${project.build.directory}/reports/cluecumber-reports</generatedHtmlReportDirectory>
 						</configuration>
 					</plugin>
-					<plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>test-reports</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>run</goal>
-								</goals>
-								<configuration>
-									<tasks>
-										<junitreport todir="target/site/junit">
-											<fileset dir="target/site/junit">
-												<include name="**/*.xml" />
-											</fileset>
-											<report todir="target/site/junit" format="frames" />
-										</junitreport>
-									</tasks>
-								</configuration>
-							</execution>
-						</executions>
-						<dependencies>
-							<dependency>
-								<groupId>ant</groupId>
-								<artifactId>ant-junit</artifactId>
-								<version>1.6.2</version>
-							</dependency>
-						</dependencies>
-					</plugin>
+					<!-- <plugin> <artifactId>maven-antrun-plugin</artifactId> <executions> 
+						<execution> <id>test-reports</id> <phase>verify</phase> <goals> <goal>run</goal> 
+						</goals> <configuration> <tasks> <junitreport todir="target/reports/junit"> 
+						<fileset dir="target/reports/junit"> <include name="**/*.xml" /> </fileset> 
+						<report todir="target/reports/junit" format="frames" /> </junitreport> </tasks> 
+						</configuration> </execution> </executions> <dependencies> <dependency> <groupId>ant</groupId> 
+						<artifactId>ant-junit</artifactId> <version>1.6.2</version> </dependency> 
+						</dependencies> </plugin> -->
 					<plugin>
 						<groupId>net.masterthought</groupId>
 						<artifactId>maven-cucumber-reporting</artifactId>
@@ -356,54 +390,13 @@
 								</goals>
 								<configuration>
 									<projectName>${project.artifactId}</projectName>
-									<outputDirectory>${project.build.directory}/site/</outputDirectory>
+									<outputDirectory>${project.build.directory}/reports/</outputDirectory>
 									<checkBuildResult>false</checkBuildResult>
 									<jsonFiles>
-										<param>${project.build.directory}/site/cucumber.json</param>
+										<param>${project.build.directory}/reports/cucumber.json</param>
 									</jsonFiles>
 									<parallelTesting>false</parallelTesting>
 								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>com.github.kongchen</groupId>
-						<artifactId>swagger-maven-plugin</artifactId>
-						<version>${swagger.plugin.version}</version>
-						<configuration>
-							<skipSwaggerGeneration>false</skipSwaggerGeneration>
-							<detail>true</detail>
-							<apiSources>
-								<apiSource>
-									<springmvc>true</springmvc>
-									<locations>${project.groupId}</locations>
-									<swaggerFileName>${project.artifactId}</swaggerFileName>
-									<schemes>http,https</schemes>
-									<host>${fleet-simulator.baseurl}</host>
-									<basePath>${fleet-simulator.path}</basePath>
-									<outputFormats>yaml,json</outputFormats>
-									<jsonExampleValues>false</jsonExampleValues>
-									<swaggerDirectory>${project.build.directory}/site/</swaggerDirectory>
-									<info>
-										<title>${project.name} REST API</title>
-										<version>${project.version}</version>
-										<description>${project.description}</description>
-									</info>
-									<securityDefinitions>
-										<securityDefinition>
-											<jsonPath>${project.basedir}/securityDefinitions.json</jsonPath>
-										</securityDefinition>
-									</securityDefinitions>
-								</apiSource>
-							</apiSources>
-						</configuration>
-						<executions>
-							<execution>
-								<id>generate-swagger</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>generate</goal>
-								</goals>
 							</execution>
 						</executions>
 					</plugin>
@@ -421,7 +414,7 @@
 						</executions>
 					</plugin>
 					<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-pdf-plugin</artifactId> 
-						<version>1.4</version> <configuration> <outputDirectory>${project.build.directory}/site</outputDirectory> 
+						<version>1.4</version> <configuration> <outputDirectory>${project.build.directory}/reports</outputDirectory> 
 						</configuration> <executions> <execution> <goals> <goal>pdf</goal> </goals> 
 						<phase>verify</phase> </execution> </executions> </plugin> -->
 					<plugin>
@@ -467,7 +460,7 @@
 						<version>2.5</version>
 						<configuration>
 							<linkJavadoc>true</linkJavadoc>
-							<javadocDir>${project.build.directory}/site/apidocs</javadocDir>
+							<javadocDir>${project.build.directory}/reports/apidocs</javadocDir>
 						</configuration>
 					</plugin>
 					<plugin>
@@ -480,7 +473,7 @@
 							<consoleOutput>true</consoleOutput>
 							<failsOnError>true</failsOnError>
 							<linkXRef>false</linkXRef>
-							<outputFile>${project.build.directory}/site/checkstyle-result.xml</outputFile>
+							<outputFile>${project.build.directory}/reports/checkstyle-result.xml</outputFile>
 						</configuration>
 						<reportSets>
 							<reportSet>
@@ -494,7 +487,7 @@
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-surefire-report-plugin</artifactId>
 						<configuration>
-							<reportsDirectory>${project.build.directory}/site/junit</reportsDirectory>
+							<reportsDirectory>${project.build.directory}/reports/junit</reportsDirectory>
 						</configuration>
 					</plugin>
 					<plugin>
@@ -565,6 +558,7 @@
 		<name>fleet-simulator</name>
 		<url>http://www.organization.org</url>
 	</organization>
+	<url>http://www.connectedjourneys.co.nz</url>
 	<inceptionYear>2018</inceptionYear>
 	<licenses>
 		<license>
@@ -585,9 +579,9 @@
 		<url>https://organization.atlassian.net/browse/FLSIM</url>
 	</issueManagement>
 	<scm>
-		<connection>scm:git:https://username:password@github.com/thlaegler/${project.artifactId}.git</connection>
-		<developerConnection>scm:git:https://username:password@github.com/thlaegler/${project.artifactId}.git</developerConnection>
-		<url>https://github.com/thlaegler/${project.artifactId}.git</url>
+		<connection>scm:git:https://github.com/thlaegler/fleet-simulator.git</connection>
+		<developerConnection>scm:git:https://github.com/thlaegler/fleet-simulator.git</developerConnection>
+		<url>https://github.com/thlaegler/fleet-simulator</url>
 		<tag>${project.version}</tag>
 	</scm>
 	<ciManagement>
