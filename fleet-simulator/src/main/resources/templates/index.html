@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+<div th:include="fragments/head :: head" th:remove="tag">Global Header</div>
+<title>Fleet Administration</title>
+
+<!-- <div th:include="fragments/map :: functions" th:remove="tag">[Map Javascript]</div> -->
+<div th:include="fragments/map :: functions" th:remove="tag">[Map Javascript]</div>
+
+</head>
+<body>
+
+    <h1>Fleet Simulator Administration</h1>
+
+    <h2>Swagger UI</h2>
+
+    <a href="/swagger-ui.html" target="_blank">Swagger UI</a>
+
+    <h2>Book a Journey</h2>
+
+    <form name="taxi" action="">
+        From:
+        <input type="text" name="from" />
+        <br /> To:
+        <input type="text" name="to" />
+        <input type="button" name="bookButton" Value="Book!" onClick="bookTaxi(this.form)">
+    </form>
+    <div id="bookingResponse"></div>
+    <script type="text/javascript">
+        function formToJSON(from, to) {
+            return JSON.stringify({
+                "from": JSON.stringify({
+                	"lat": from.split(",")[0],
+                    "lng":  from.split(",")[1],
+                }),
+                "to": JSON.stringify({
+                    "lat":  to.split(",")[0],
+                    "lng":  to.split(",")[1],
+                })
+            });
+        }
+
+        function bookTaxi(form) {
+            var from = form.from.value;
+            var to = form.to.value;
+
+            $.ajax({
+                url: "[[${backend}]]/fleet/journeys/book",
+                data: formToJSON(from, to),
+                error: function (error) {
+                    console.error('Cannot get Vehicles from backend');
+                },
+                success: function (journey) {
+                    document.getElementById('bookingResponse').innerHtml = JSON.stringify(journey);
+                },
+                dataType: "json"
+            });
+        }
+    </script>
+
+<h2>Vehicle Distribution</h2>
+
+<div id="mapCanvas" style="width: 800px; height: 600px;"></div>
+
+<!-- <div id="googleMap" style="width: 800px; height: 600px;"></div>
+
+<!-- <div th:include="fragments/scripts :: [id='scripts']" th:remove="tag">Scripts</div> -->
+
+</body>
+</html>

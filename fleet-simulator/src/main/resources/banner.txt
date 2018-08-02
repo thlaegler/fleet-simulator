@@ -1,0 +1,13 @@
+                      __         _   __    _   _               ___     ______ 
+                     [  |       (_) [  |  (_) / |_           .'   `. .' ____ \                                                      
+   _ .--..--.   .--.  | |.--.   __   | |  __ `| |-' _   __  /  .-.  \| (___ \_|                                                     
+  [ `.-. .-. |/ .'`\ \| '/'`\ \[  |  | | [  | | |  [ \ [  ] | |   | |'_.____`.                                                      
+   | | | | | || \__. ||  \__/ | | |  | |  | | | |,  \ '/ /  \  `-'  /| \____) |                                                     
+  [___||__||__]'.__.'[__;.__.' [___][___][___]\__/[\_:  /    `.___.'  \______.'                                                     
+                                                   \__.'                                                                           
+Application:	${spring.application.name}
+Version:	${fleet-simulator.version}
+Description:	${fleet-simulator.description}
+Java:		${fleet-simulator.java.version}
+Spring Boot:	${springboot.version}
+Profile:	${spring.profiles.active}

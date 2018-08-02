@@ -1,0 +1,22 @@
+{
+	"OAUth2ClientCredentials": {
+		"type": "oauth2",
+		"tokenUrl": "https://noelbranzuela-eval-test.apigee.net/oauth/client_credential/accesstoken?grant_type=client_credentials",
+		"flow": "application",
+		"scopes": {
+			"guest": "guest rights",
+			"user": "user rights",
+			"admin": "admin rights"
+		}
+	},
+	"OAuth2UserPassword": {
+		"type": "oauth2",
+		"tokenUrl": "https://noelbranzuela-eval-test.apigee.net/oauth/client_credential/accesstoken?grant_type=client_credentials",
+		"flow": "password",
+		"scopes": {
+			"guest": "guest rights",
+			"user": "user rights",
+			"admin": "admin rights"
+		}
+	}
+}

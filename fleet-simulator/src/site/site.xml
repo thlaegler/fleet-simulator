@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="${project.artifactId}">
+	<version position="right" />
+	<publishDate position="right" />
+	<bannerLeft>
+		<name>${project.artifactId}</name>
+		<src>https://en.wikipedia.org/wiki/Fleet_vehicle#/media/File:UPS_truck_-804051.jpg</src>
+		<href>http://www.organization.org</href>
+	</bannerLeft>
+	<!-- <bannerRight> <src>https://en.wikipedia.org/wiki/Fleet_vehicle#/media/File:UPS_truck_-804051.jpg</src> </bannerRight> -->
+	<poweredBy>
+		<logo name=${project.name} href="https://www.organization.org"
+			img="https://en.wikipedia.org/wiki/Fleet_vehicle#/media/File:UPS_truck_-804051.jpg" />
+	</poweredBy>
+	<skin>
+		<groupId>org.apache.maven.skins</groupId>
+		<artifactId>maven-fluido-skin</artifactId>
+		<version>1.6</version>
+	</skin>
+
+	<body>
+
+		<menu name="Generated Docs">
+			<item name="Test Report #1" href="/junit/index.html" />
+			<item name="Test Report #2" href="/cucumber/index.html" />
+			<item name="Test Report #3"
+				href="/cluecumber-reports/index.html" />
+			<item name="Test Report #4"
+				href="/cucumber-html-reports/overview-features.html" />
+			<item name="OpenAPI Spec" href="/${project.artifactId}.yaml" />
+			<item name="JavaDoc" href="/javadoc/index.html" />
+			<item name="JavaDoc X-Ref" href="/xref/index.html" />
+		</menu>
+
+		<menu ref="reports" />
+
+		<menu ref="site" />
+
+	</body>
+</project>

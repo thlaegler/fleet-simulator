@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: @project.artifactId@
+  cloud:
+    config:
+      uri: http://fleet-config:8888
+      label: master

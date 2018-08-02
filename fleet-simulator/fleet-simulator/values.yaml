@@ -1,0 +1,8 @@
+docker:
+  registry: 'DOCKER_REGISTRY'
+  image: 'fleet-simulator'
+  tag: 'DOCKER_TAG'
+service:
+  type: LoadBalancer
+java:
+  options: '-Xmx512m -server -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseParallelGC'

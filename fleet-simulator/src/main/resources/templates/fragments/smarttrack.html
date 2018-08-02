@@ -1,0 +1,199 @@
+<html>
+
+<head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCjrgOdsGIjnNrpgTZpR0T2OHl82YrHn04"></script>
+</head>
+
+<body>
+
+    <div id="mapCanvas" style="width: 800px; height: 600px;"></div>
+
+    <script>
+        /*<![CDATA[*/
+
+        var map;
+        var vehicleMarkers = [];
+
+        function initialize() {
+            var center = new google.maps.LatLng(-36.844042, 174.767768);
+            var mapOptions = {
+                center: center,
+                zoom: 16,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            map = new google.maps.Map(document.getElementById("mapCanvas"), mapOptions);
+        }
+
+        //Load google map
+        google.maps.event.addDomListener(window, 'load', initialize);
+
+        class TransitionAnimation {
+
+            constructor(marker, vehicle) {
+                this.marker = marker;
+                this.vehicle = vehicle;
+                this.currentPosition = marker.position;
+                this.newPosition = vehicle.position;
+                this.numDeltas = 100;
+                this.delay = 10; //milliseconds
+                this.i = 0;
+            }
+
+            animate() {
+                this.deltaLat = (this.newPosition.lat - this.currentPosition.lat) / this.numDeltas;
+                this.deltaLng = (this.newPosition.lng - this.currentPosition.lng) / this.numDeltas;
+                this.moveMarker();
+            }
+
+            moveMarker() {
+                if (this.currentPosition) {
+                    this.currentPosition.lat += this.deltaLat;
+                    this.currentPosition.lng += this.deltaLng;
+                    var latlng = new google.maps.LatLng(this.currentPosition.lat, this.currentPosition.lng);
+                    this.marker.setPosition(latlng);
+                    if (this.i != this.numDeltas) {
+                        this.i++;
+                        setTimeout(this.moveMarker, this.delay);
+                    }
+                } else {
+                    this.marker.setPosition(this.currentPosition);
+                }
+            }
+        }
+
+        createMarker({
+            licencePlate: 'DUMMY TAXI',
+            vehicleType: 'TAXI',
+            position: {
+                lat: -36.8487779,
+                lng: 174.7380663
+            },
+            driver: {
+                driverId: "123456",
+                name: "Timo Taxidriver"
+            },
+            provider: {
+                providerId: "SATORI-MOCK"
+            }
+        });
+        createMarker({
+            licencePlate: 'DUMMY BUS',
+            vehicleType: 'BUS',
+            position: {
+                lat: -36.8651021,
+                lng: 174.7374951
+            },
+            driver: {
+                driverId: "123",
+                name: "Berny Busdriver"
+            },
+            provider: {
+                providerId: "SMARTTRACK-MOCK"
+            }
+        });
+
+        function createMarker(vehicle) {
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng(vehicle.position.lat, vehicle.position.lng),
+                title: vehicle.licencePlate,
+                map: map,
+                draggable: false,
+                icon: getMarkerImage(vehicle)
+            });
+            var contentString = '<div>' + vehicle.licencePlate + '</div>';
+            contentString = contentString + '<div>Vehicle ID: ' + vehicle.vehicleId + '</div>';
+            if (vehicle.provider) {
+                contentString = contentString + '<div>Provider ID: ' + vehicle.provider.providerId + '</div>';
+            }
+            if (vehicle.driver) {
+                contentString = contentString + '<div>' + vehicle.driver.driverId + ': ' + vehicle.driver.name +
+                    '</div>';
+            }
+            var infowindow = new google.maps.InfoWindow({
+                content: contentString
+            });
+            marker.addListener('click', function () {
+                infowindow.open(map, marker);
+            });
+            infowindow.open(map, marker)
+            vehicleMarkers[vehicle.licencePlate] = marker;
+            return marker;
+        }
+
+        function updateMarker(vehicle) {
+            var marker = vehicleMarkers[vehicle.licencePlate];
+
+            marker.position = vehicle.position;
+            marker.icon.rotation = getAngle(marker.position, vehicle.position);
+
+            // let transition = new TransitionAnimation(marker, vehicle);
+            // transition.animate();
+        }
+
+        function getMarkerImage(vehicle) {
+            var imageUrl =
+                'https://github.com/google/material-design-icons/blob/master/maps/drawable-mdpi/ic_local_taxi_black_24dp.png?raw=true';
+            if (vehicle && vehicle.vehicleType == 'BUS') {
+                imageUrl = 'images/bus_64.png';
+            } else if (vehicle && vehicle.vehicleType == 'TAXI') {
+                imageUrl = 'images/taxi_64.png';
+            }
+
+            return {
+                url: imageUrl,
+                size: new google.maps.Size(64, 64),
+                origin: new google.maps.Point(0, 0),
+                anchor: new google.maps.Point(32, 32),
+                rotation: vehicle.bearing
+            }
+        }
+
+        function getAngle(position1, position2) {
+            var dLon = (position2.lng - position1.lng);
+
+            var y = Math.sin(dLon) * Math.cos(position2.lat);
+            var x = Math.cos(position1.lat) * Math.sin(position2.lat) - Math.sin(position1.lat) *
+                Math.cos(position2.lat) * Math.cos(dLon);
+
+            var brng = Math.atan2(y, x);
+            brng = brng * 180 / Math.PI;
+            brng = (brng + 360) % 360;
+            brng = 360 - brng; // count degrees counter-clockwise - remove to make clockwise
+
+            return brng;
+        }
+
+        (function poll() {
+            setTimeout(function () {
+                $.ajax({
+                    url: "http://localhost:8083/fleet/admin/vehicles",
+                    error: function () {
+                        console.error('Cannot get Vehicles from backend');
+                    },
+                    success: function (responsePage) {
+                        // vehicleMarkers[responsePage.licencePlate] = data;
+                        responsePage.content.forEach(function (vehicle, index) {
+                            if (vehicle.licencePlate in vehicleMarkers) {
+                                marker = vehicleMarkers[vehicle.licencePlate];
+                                if (vehicle.position && marker.position && (vehicle.position
+                                        .lat != marker.position.lat ||
+                                        vehicle.position.lng != marker.position.lng)) {}
+                                updateMarker(vehicle);
+                            } else {
+                                createMarker(vehicle);
+                            }
+                        })
+                    },
+                    dataType: "json",
+                    complete: poll
+                });
+            }, 3000);
+        })();
+
+        /*]]>*/
+    </script>
+
+</body>
+
+</html>

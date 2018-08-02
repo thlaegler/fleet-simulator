@@ -1,0 +1,10 @@
+steps:
+
+- id: GTFS
+  name: gcr.io/$PROJECT_ID/gtfs-builder
+  dir: 'gtfs2sql'
+  entrypoint: /bin/bash
+  args: [ './gtfs2sql.sh', '$_GTFS_NAME' ]
+
+
+timeout: 3600s

@@ -1,0 +1,250 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+<div th:fragment="functions">
+
+	<script th:src="|http://maps.googleapis.com/maps/api/js?key=${apiKey}|">
+	</script>
+
+
+	<script th:inline='text'>
+    /*<![CDATA[*/
+
+    var map;
+    var vehicleMarkers = [];
+    var vehicleRoutes = [];
+
+    function initialize() {
+        var center = new google.maps.LatLng([[${mapCenter}]]);
+        var mapOptions = {
+            center: center,
+            zoom: 16,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById('mapCanvas'), mapOptions);
+    }
+
+    //Load google map
+    google.maps.event.addDomListener(window, 'load', initialize);
+
+    function updateVehicleMarker(vehicle) {
+    	if (vehicle.licencePlate in vehicleMarkers) {
+    		let marker = vehicleMarkers[vehicle.licencePlate];
+            if (vehicle.position && marker.position && (roundNumber(vehicle.position.lat, 6) != roundNumber(marker.position.lat(), 6) ||
+            		roundNumber(vehicle.position.lng, 6) != roundNumber(marker.position.lng(), 6))) {
+    	        newRotation = getAngle(new google.maps.LatLng(marker.position.lat(), marker.position.lng()), new google.maps.LatLng(vehicle.position.lat, vehicle.position.lng));
+    	        marker.setIcon(createMarkerImage(getImageUrl(vehicle.vehicleType), newRotation));
+    	        marker.setPosition(vehicle.position);
+    	        //new TransitionAnimation(marker, vehicle).animate();
+            }
+    	} else {
+    		let marker = new google.maps.Marker({
+	            position: new google.maps.LatLng(vehicle.position.lat, vehicle.position.lng),
+	            title: vehicle.licencePlate,
+	            map: map,
+	            draggable: false,
+	            icon: getMarkerImage(vehicle)
+	        });
+	
+	        contentString = contentString + '<div>';
+	        var contentString = '<div><h3>' + vehicle.licencePlate + '</h3></div>';
+	        contentString = contentString + '<div>Vehicle ID: ' + vehicle.vehicleId + '</div>';
+	        if (vehicle.provider) {
+	            contentString = contentString + '<div>Provider ID: ' + vehicle.provider.providerId + '</div>';
+	        }
+	        if (vehicle.driver) {
+	            contentString = contentString + '<div>Driver: ' + vehicle.driver.name + ' (' + vehicle.driver.driverId + ')</div>';
+	        }
+	        contentString = contentString + '<div>' + vehicle.description + '</div>';
+	
+	        contentString = contentString + '</div>';
+	        var infowindow = new google.maps.InfoWindow({
+	            content: contentString
+	        });
+	        marker.addListener('click', function () {
+	            infowindow.open(map, marker);
+	        });
+	        // infowindow.open(map, marker)
+	        vehicleMarkers[vehicle.licencePlate] = marker;      
+	    }
+    }
+    
+    var dottedLineShape = {
+            path: 'M 0,-1 0,1',
+            strokeOpacity: 1,
+            scale: 3
+    };
+    
+    function updateVehicleRoute(trip) {
+   		if(trip.route && !(trip.tripId in vehicleRoutes)) {
+    		var polyline = new google.maps.Polyline({
+                path: JSON.parse(trip.route.copyrights.split("'").join('"')),
+                geodesic: true,
+                strokeColor: '#00ff00',
+                strokeOpacity: 0.2,
+                strokeWeight: 3,
+                icons: [{
+                    icon: dottedLineShape,
+                    offset: '0',
+                    repeat: '20px'
+                  }],
+                map: map
+              });
+    		var contentString = '<div><h3>' + trip.tripId + '</h3></div>';
+    		contentString = contentString + '<div>' + trip.description + '</div>';
+    		contentString = contentString + '<div>Vehicle ID: ' + trip.vehicleId + '</div>';
+    		contentString = contentString + '<div>Provider ID: ' + trip.providerId + '</div>';
+    		contentString = contentString + '<div>Start: ' + trip.start + '</div>';
+    		contentString = contentString + '<div>ETA: ' + trip.eta + '</div>';
+    		contentString = contentString + '<div>From: ' + trip.from + '</div>';
+    		contentString = contentString + '<div>To: ' + trip.tp + '</div>';
+    		var infowindow = new google.maps.InfoWindow({
+                content: contentString
+            });
+    		polyline.addListener('click', function () {
+                infowindow.open(map, polyline);
+            });
+    		infowindow.open(map, polyline);
+            vehicleRoutes[trip.tripId] = polyline;
+       	}
+   	}
+
+    function getMarkerImage(vehicle) {
+        var imageUrl = getImageUrl(vehicle.vehicleType);
+        var bearing = vehicle.bearing;
+        if(bearing == 0) {
+        	bearing = getAngle(previousPosition, vehicle.position);
+        }
+        return createMarkerImage(imageUrl, bearing);
+    }
+    
+    function getImageUrl(vehicleType) {
+        var imageUrl =
+            'https://github.com/google/material-design-icons/blob/master/maps/drawable-mdpi/ic_local_taxi_black_24dp.png?raw=true';
+        if (vehicleType == 'BUS' || vehicleType == 'TRAIN') {
+            imageUrl = 'images/bus_64.png';
+        } else if (vehicleType == 'TAXI') {
+            imageUrl = 'images/taxi_64.png';
+        }
+        return imageUrl;
+    }
+    
+    function createMarkerImage(imageUrl, bearing) {
+        return {
+            url: imageUrl,
+            size: new google.maps.Size(64, 64),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(32, 32),
+            rotation: bearing
+        }
+    }
+
+    function getAngle(position1, position2) {
+        var dLon = (position2.lng() - position1.lng());
+        var y = Math.sin(dLon) * Math.cos(position2.lat());
+        var x = Math.cos(position1.lat()) * Math.sin(position2.lat()) - Math.sin(position1.lat()) *
+            Math.cos(position2.lat()) * Math.cos(dLon);
+        var brng = Math.atan2(y, x);
+        brng = brng * 180 / Math.PI;
+        brng = (brng + 360) % 360;
+        brng = 360 - brng; // count degrees counter-clockwise - remove to make clockwise
+
+        return brng;
+    }
+
+    (function pollTrips() {
+    	var backend = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port
+        setTimeout(function () {
+            $.ajax({
+                url: backend + '/fleet/admin/trips',
+                error: function () {
+                    console.error('Cannot get Journeys from backend ' + backend);
+                },
+                success: function (responseList) {
+                    // vehicleMarkers[responsePage.licencePlate] = data;
+                    if(responseList) {
+                    	responseList.forEach(function (trip, index) {
+                    		updateVehicleRoute(trip)
+	                    })
+                    }
+                },
+                dataType: 'json',
+                complete: pollTrips
+            });
+        }, 5000);
+    })();
+    
+    (function pollVehicles() {
+    	var backend = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port
+        setTimeout(function () {
+            $.ajax({
+                url: backend + '/fleet/admin/vehicles',
+                error: function () {
+                    console.error('Cannot get Vehicles from backend: ' + backend);
+                },
+                success: function (responsePage) {
+                    // vehicleMarkers[responsePage.licencePlate] = data;
+                    responsePage.content.forEach(function (vehicle, index) {
+                    	updateVehicleMarker(vehicle);
+                    })
+                },
+                dataType: 'json',
+                complete: pollVehicles
+            });
+        }, 5000);
+    })();
+    
+    class TransitionAnimation {
+    	
+		//let marker,vehicle,currentPosition,newPosition,numDeltas,delay,i;
+        
+        constructor(marker1, vehicle1) {
+            this.marker = marker1;
+            this.vehicle = vehicle1;
+            this.currentPosition = marker1.position;
+            this.newPosition = vehicle1.position;
+            this.numDeltas = 100;
+            this.delay = 10; //milliseconds
+            this.i = 0;
+        }
+
+        animate() {
+            this.deltaLat = (this.newPosition.lat - this.currentPosition.lat()) / this.numDeltas;
+            this.deltaLng = (this.newPosition.lng - this.currentPosition.lng()) / this.numDeltas;
+            moveMarker(this);
+        }
+    }
+    
+    function moveMarker(transition) {
+        if (transition.currentPosition) {
+        	transition.currentPosition = new google.maps.LatLng(transition.currentPosition.lat() + transition.deltaLat, transition.currentPosition.lng() + transition.deltaLng);
+            transition.marker.setPosition(transition.currentPosition);
+            if (transition.i <= transition.numDeltas) {
+            	transition.i++;
+                setTimeout(function() {
+                	moveMarker(transition)
+                }, transition.delay);
+            }
+        } else {
+        	transition.marker.setPosition(transition.currentPosition);
+        }
+    }
+    
+    function roundNumber(num, scale) {
+    	  if(!("" + num).includes("e")) {
+    	    return +(Math.round(num + "e+" + scale)  + "e-" + scale);
+    	  } else {
+    	    var arr = ("" + num).split("e");
+    	    var sig = ""
+    	    if(+arr[1] + scale > 0) {
+    	      sig = "+";
+    	    }
+    	    return +(Math.round(+arr[0] + "e" + sig + (+arr[1] + scale)) + "e-" + scale);
+    	  }
+    	}
+
+    /*]]>*/
+	</script>
+
+</div>
+
+</html>

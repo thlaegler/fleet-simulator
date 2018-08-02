@@ -1,0 +1,9 @@
+server:
+  port: 8086
+logging:
+  level:
+    io.laegler.fleet.simulator: TRACE
+    org.springframework.data: INFO
+    org.springframework.security: INFO
+    org.springframework.cloud: INFO
+    org.springframework.web: INFO

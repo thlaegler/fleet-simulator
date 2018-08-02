@@ -1,0 +1,5 @@
+
+CREATE DATABASE gtfs;
+CREATE USER fleetsimulator PASSWORD '123';
+ALTER USER fleetsimulator WITH SUPERUSER;
+GRANT ALL PRIVILEGES ON DATABASE gtfs TO fleetsimulator;
